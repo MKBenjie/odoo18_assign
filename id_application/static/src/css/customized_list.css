@@ -1,0 +1,69 @@
+.o_list_stylish tbody tr:hover {
+    background-color: #f7f7f9; /* Light gray background on hover */
+    transition: background-color 0.3s ease;
+}
+
+/* Style the badges for status */
+.o_list_stylish .o_field_widget.o_badge {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-transform: capitalize;
+}
+
+.o_list_stylish .o_field_widget.o_badge.decoration-info {
+    background-color: #17a2b8; /* Info blue */
+    color: #ffffff;
+}
+
+.o_list_stylish .o_field_widget.o_badge.decoration-primary {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+}
+
+.o_list_stylish .o_field_widget.o_badge.decoration-success {
+    background-color: #28a745; /* Success green */
+    color: #ffffff;
+}
+
+.o_list_stylish .o_field_widget.o_badge.decoration-warning {
+    background-color: #ffc107; /* Warning yellow */
+    color: #212529;
+}
+
+.o_list_stylish .o_field_widget.o_badge.decoration-danger {
+    background-color: #dc3545; /* Danger red */
+    color: #ffffff;
+}
+
+/* Add some spacing and padding to the table */
+.o_list_stylish table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.o_list_stylish thead th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+}
+
+.o_list_stylish tbody td {
+    padding: 10px 15px;
+    border: none;
+    vertical-align: middle;
+}
+
+/* Add rounded corners to the table */
+.o_list_stylish .o_list_view {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Highlight the header row */
+.o_list_stylish thead tr {
+    background-color: #e9ecef;
+}

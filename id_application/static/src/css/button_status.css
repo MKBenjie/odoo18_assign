@@ -1,0 +1,56 @@
+.o_centered_content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+/* .o_kanban_record {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+    margin: 10px auto;
+    width: 80%;
+} */
+
+.status {
+    font-size: 1em;
+    font-weight: bold;
+    padding: 10px;
+    color: #333;
+}
+
+.o_kanban_record {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    margin: 10px 0;
+}
+
+.reference_number {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.status_chain {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.status {
+    font-size: 1rem;
+    padding: 5px 10px;
+}
+
+.current_status {
+    font-weight: bold;
+}
+
+.arrow {
+    font-size: 1rem;
+    color: #6c757d;
+}

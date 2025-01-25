@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_nia_root" name="NIA" web_icon="id_application,static/description/icon.png">
+        <menuitem id="menu_nia_application" name="Apply" action="action_national_id_applicant" />
+        <menuitem id="menu_nia_requests" name="Requests"
+            groups="id_application.group_identification_approvers">
+            <menuitem id="menu_nia_requests_all" name="Applicants"
+                action="action_national_id_requests" />
+        </menuitem>
+    </menuitem>
+
+</odoo>

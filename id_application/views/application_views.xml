@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <record id="view_national_id_applicant_kanban" model="ir.ui.view">
+        <field name="name">national.applicant.kanban</field>
+        <field name="model">national.applicant</field>
+        <field name="arch" type="xml">
+            <kanban class="o_centered_content">
+                <field name="stage" />
+                <field name="reference" /> <!-- Add reference field -->
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_record card shadow-sm p-3 mb-3 bg-white rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <!-- Status Icon -->
+                                <t t-if="record.stage">
+                                    <span class="badge badge-pill"
+                                        t-att-class="'badge-' + (record.stage.raw_value == 'approved' and 'success' or record.stage.raw_value == 'denied' and 'danger' or record.stage.raw_value == 'validating' and 'warning' or record.stage.raw_value == 'sent' and 'primary' or 'secondary')">
+                                        <t t-esc="record.stage.value" />
+                                    </span>
+                                </t>
+                                <!-- Title -->
+                                <div class="font-weight-bold text-truncate">
+                                    <t t-esc="record.name" />
+                                </div>
+                            </div>
+
+                            <!-- Reference -->
+                            <div class="text-muted small mb-2">
+                                <span>Reference:</span>
+                                <t t-esc="record.reference.value or 'N/A'" />
+                            </div>
+
+                            <!-- Action Button or Status -->
+                            <div class="text-center">
+                                <!-- Draft Stage: Show "Start Application" Button -->
+                                <t t-if="record.stage and record.stage.raw_value == 'draft'">
+                                    <button type="object" name="open_application_form"
+                                        class="btn btn-primary btn-block btn-sm mt-2">
+                                        Continue Application
+                                    </button>
+                                </t>
+
+                                <!-- Sent Stage -->
+                                <t t-elif="record.stage.raw_value == 'sent'">
+                                    <span class="text-primary">
+                                        <i class="fa fa-paper-plane"></i> Sent → Validating </span>
+                                </t>
+
+                                <!-- Validating Stage -->
+                                <t t-elif="record.stage.raw_value == 'validating'">
+                                    <span class="text-warning">
+                                        <i class="fa fa-spinner fa-spin"></i> Validating → Approved </span>
+                                </t>
+
+                                <!-- Approved Stage -->
+                                <t t-elif="record.stage.raw_value == 'approved'">
+                                    <span class="text-success">
+                                        <i class="fa fa-check-circle"></i> Approved </span>
+                                </t>
+
+                                <!-- Denied Stage -->
+                                <t t-elif="record.stage.raw_value == 'denied'">
+                                    <span class="text-danger">
+                                        <i class="fa fa-times-circle"></i> Denied </span>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <record id="view_national_id_applicant_form" model="ir.ui.view">
+        <field name="name">national.applicant.form</field>
+        <field name="model">national.applicant</field>
+        <field name="arch" type="xml">
+            <form string="National ID Application">
+                <header>
+                    <!-- Apply Button, visible only in draft -->
+                    <button name="move_to_sent" type="object" string="Apply"
+                        invisible="stage in ['sent', 'validating', 'approved', 'denied']"
+                        class="btn-primary"
+                        confirm="Are you sure you want to submit your application? Once submitted, you won't be able to edit it." />
+                    <!-- Statusbar -->
+                    <field name="stage" widget="statusbar"
+                        statusbar_visible="draft,sent,validating,approved" />
+                </header>
+                <sheet>
+                    <!-- Reference Section -->
+                    <div class="d-flex justify-content-between align-items-center py-3">
+                        <div class="display-4 text-primary font-weight-bold">
+                            <field name="reference" readonly="1" />
+                        </div>
+                    </div>
+
+                    <!-- Personal Information Section -->
+                    <div class="o_form_section">
+                        <h3 class="text-secondary mb-3">Personal Information</h3>
+                        <group>
+                            <group>
+                                <field name="first_name" placeholder="Enter First Name"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                                <field name="sur_name" placeholder="Enter Surname"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                                <field name="other_name" placeholder="Enter Other Name"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                            </group>
+                            <group>
+                                <field name="dob"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                                <field name="gender"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                                <field name="address" placeholder="Enter Address"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- Notebook Section -->
+                    <notebook>
+                        <page string="Photo">
+                            <group>
+                                <div class="text-center py-2">
+                                    <field name="photo" widget="image"
+                                        class="img-thumbnail"
+                                        style="width: 350px; height: 350px;"
+                                        readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                                </div>
+                                <div class="alert alert-info mt-3" role="alert"
+                                    invisible="stage in ['sent', 'validating', 'approved', 'denied']">
+                                    <h5>Photo Upload Guidelines</h5>
+                                    <ul>
+                                        <li>The photo should be a clear passport-sized image.</li>
+                                        <li>The background must be plain white or light-colored.</li>
+                                        <li>The face should be fully visible, centered, and looking
+                                            directly at the camera.</li>
+                                        <li>Avoid wearing sunglasses, hats, or any accessories that
+                                            obscure the face.</li>
+                                        <li>The file format should be JPEG or PNG.</li>
+                                        <li>The image size should not exceed 5MB.</li>
+                                    </ul>
+                                </div>
+                            </group>
+                        </page>
+                        <page string="Letter">
+                            <group>
+                                <field name="lc_letter" widget="file_upload" filename="file_name"
+                                    readonly="stage in ['sent', 'validating', 'approved', 'denied']" />
+                                <field name="file_name" invisible="1" />
+                            </group>
+                        </page>
+                        <page string="Guardian Info">
+                            <group>
+                                <h4 class="text-secondary">Guardian Details</h4>
+                                <p class="text-muted">Information about the guardian will be entered
+                                    here.</p>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- Chatter Section -->
+                <div class="o_form_chatter">
+                    <field name="message_is_follower" invisible="1" />
+                    <chatter />
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- <record id="action_national_id_applicant" model="ir.actions.act_window">
+        <field name="name">Apply</field>
+        <field name="res_model">national.applicant</field>
+        <field name="view_ids"
+            eval="[Command.clear(),
+                          (0,0,{'view_mode':'list', 'view_id': ref('view_national_id_applicant_tree')}),
+                          (0,0,{'view_mode':'form', 'view_id': ref('view_national_id_applicant_form')})]" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Start an Application Process
+            </p>
+        </field>
+    </record> -->
+
+    <record id="action_national_id_applicant" model="ir.actions.act_window">
+        <field name="name">Apply</field>
+        <field name="res_model">national.applicant</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_ids"
+            eval="[Command.clear(),
+                                   (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_national_id_applicant_kanban')}),
+                                   (0, 0, {'view_mode': 'form', 'view_id': ref('view_national_id_applicant_form')})]" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Start an Application Process
+            </p>
+        </field>
+    </record>
+
+    <!-- <record id="action_national_id_applicant_dashboard" model="ir.actions.client">
+        <field name="name">Apply</field>
+        <field name="tag">id_application.application_dashboard</field>
+        <field name="target">main</field>
+    </record> -->
+
+</odoo>

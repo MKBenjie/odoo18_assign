@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    
+
+    <template id="SecureCaptureTemplate">
+        <div class="modal webcam-modal">
+            <div class="modal-content">
+                <h3>Capture Your Picture</h3>
+                <video id="webcam-feed"></video>
+                <button class="btn btn-primary btn-capture">Capture</button>
+                <button class="btn btn-secondary btn-close">Close</button>
+            </div>
+        </div>
+    </template>
+
+</odoo>
