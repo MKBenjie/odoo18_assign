@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Inherited form view for purchase order -->
+        <record id="view_purchase_order_form_inherited" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherited</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <!-- Add a new page for vendors -->
+                <!-- <xpath expr="//page[@name='products']" position="after">
+                    <page name="vendors_page" string="Vendors">
+                        <field name="rfq_vendor_ids" widget="many2many_tags"/>
+                    </page>
+                </xpath> -->
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="partner_id" options="{'no_create': True}" />
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="vendor_ids" widget="many2many_tags" />
+                </xpath>
+
+                 <notebook position="inside">
+                    <page string="Bids">
+                        <field name="bid_ids" context="{'default_order_id': id}">
+                            <!-- <tree editable="bottom">
+                                <field name="vendor_id" />
+                                <field name="bid_amount" />
+                                <field name="bid_notes" />
+                                <field name="bid_attachment_ids" widget="many2many_binary" />
+                            </tree> -->
+                            <form editable='bottom'>
+                                <group>
+                                    <field name="vendor_id" />
+                                    <field name="bid_amount" />
+                                    <field name="bid_notes" />
+                                    <field name="bid_attachment_ids" widget="many2many_binary" />
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+
+            </field>
+        </record>
+
+        <!-- Inherit the list view to display vendors -->
+        <record id="view_purchase_order_tree_inherited" model="ir.ui.view">
+            <field name="name">purchase.order.tree.inherited</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="vendor_ids" widget="many2many_tags" string="Vendors"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- <record id="view_purchase_order_bid_tree" model="ir.ui.view">
+            <field name="name">purchase.order.bid.tree</field>
+            <field name="model">purchase.order.bid</field>
+            <field name="arch" type="xml">
+                <tree string="Bids" editable="bottom">
+                    <field name="rfq_id" />
+                    <field name="vendor_id" />
+                    <field name="bid_amount" />
+                    <field name="bid_notes" />
+                </tree>
+            </field>
+        </record> -->
+
+        <!-- Form view for purchase order bids -->
+        <record id="view_purchase_order_bid_form" model="ir.ui.view">
+            <field name="name">purchase.order.bid.form</field>
+            <field name="model">purchase.order.bid</field>
+            <field name="arch" type="xml">
+                <form string="Bid">
+                    <group>
+                        <field name="rfq_id" />
+                        <field name="vendor_id" />
+                        <field name="bid_amount" />
+                        <field name="bid_notes" />
+                        <field name="bid_attachment_ids" widget="many2many_binary" />
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
