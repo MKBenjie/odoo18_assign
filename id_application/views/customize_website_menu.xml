@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <template id="website_menu_customization" inherit_id="website.layout"
+        name="Customize Website Menu">
+        <!-- Add Apply button -->
+        <xpath expr="//ul[hasclass('navbar-nav')]" position="inside">
+            <li class="nav-item">
+                <a class="nav-link" href="/national_id/apply">Apply</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/national_id/status">Track</a>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="national_application_homepage" name="National Application Welcome Page">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="text-center">
+                    <h1 class="display-4 text-primary">Welcome to the National ID Application Portal</h1>
+                    <p class="lead mt-3 text-muted">
+                        Seamless and secure national ID applications.
+                        Apply, track your status, or contact us for assistance with your
+                        application.
+                    </p>
+                    <div class="mt-4">
+                        <a href="/national_id/apply" class="btn btn-primary btn-lg mr-2">Apply Now</a>
+                        <a href="/national_id/status" class="btn btn-secondary btn-lg">Track Your
+                            Application</a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

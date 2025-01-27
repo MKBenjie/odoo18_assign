@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <template id="tracking_result_template" name="Tracking Result">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <t t-if="applicant">
+                    <div class="card shadow-lg mx-auto p-4"
+                        style="max-width: 600px; border-radius: 12px;">
+                        <h2 class="text-center mb-4">Application Status</h2>
+                        <div class="mb-3">
+                            <h4>Reference Number:</h4>
+                            <p class="text-primary fw-bold">
+                                <t t-esc="applicant.reference" />
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <h4>Status:</h4>
+                            <div>
+                                <t t-if="applicant.stage == 'draft'">
+                                    <span class="text-muted"><i class="fa fa-pencil-alt"></i> Draft</span>
+                                </t>
+                                <t t-elif="applicant.stage == 'sent'">
+                                    <span class="text-primary"><i class="fa fa-paper-plane"></i>
+                                        Sent</span>
+                                </t>
+                                <t t-elif="applicant.stage == 'validating'">
+                                    <span class="text-warning"><i class="fa fa-spinner fa-spin"></i>
+                                        Under Review</span>
+                                </t>
+                                <t t-elif="applicant.stage == 'approved'">
+                                    <span class="text-success"><i class="fa fa-check-circle"></i>
+                                        Approved</span>
+                                </t>
+                                <t t-elif="applicant.stage == 'denied'">
+                                    <span class="text-danger"><i class="fa fa-times-circle"></i>
+                                        Rejected</span>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h4>Applicant Name:</h4>
+                            <p>
+                                <t t-esc="applicant.first_name" />
+                                <t t-esc="applicant.sur_name" />
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <h4>Submission Date:</h4>
+                            <p>
+                                <t t-esc="applicant.create_date" />
+                            </p>
+                        </div>
+                        <a href="/" class="btn btn-secondary w-100 mt-3" style="border-radius: 8px;">Return
+                            to Homepage</a>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="text-center">
+                        <h1 class="text-danger mb-4">Application Not Found</h1>
+                        <p class="mb-3">We could not find an application with the provided reference
+                            number.</p>
+                        <p class="text-muted">Please verify your reference number and try again. If
+                            the issue persists, contact our support team for help.</p>
+                        <a href="/national_id/status" class="btn btn-primary mt-3"
+                            style="border-radius: 8px;">Try Again</a>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="application_status_template" name="Track Application">
+        <t t-call="website.layout">
+            <div class="container mt-5 d-flex justify-content-center">
+                <div class="card shadow-lg p-4" style="max-width: 500px; border-radius: 12px;">
+                    <h1 class="text-center mb-4">Track Your Application</h1>
+                    <form action="/national_id/track" method="get" class="mt-4">
+                        <div class="form-group mb-3">
+                            <!-- <input type="hidden" name="csrf_token"
+                                t-att-value="request.csrf_token()" /> -->
+                            <label for="reference" class="form-label">Enter Your Reference Number:</label>
+                            <input type="text" name="reference" class="form-control"
+                                placeholder="E.g., REF12345" required='1'
+                                style="border-radius: 8px;" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"
+                            style="border-radius: 8px;">Track Application</button>
+                    </form>
+                    <p class="text-muted mt-3 text-center">Lost your reference number? Contact
+                        support for assistance.</p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

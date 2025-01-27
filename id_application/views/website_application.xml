@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <template id="application_form_template" name="National ID Application Form">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <h1 class="text-primary mb-4">Apply for a National ID</h1>
+
+                <!-- Status Section -->
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <div class="display-4 text-primary font-weight-bold"> Reference: <t
+                            t-esc="reference or 'New'" />
+                    </div>
+                </div>
+
+                <!-- Form Section -->
+                <form action="/national_id/submit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                    <!-- Personal Information -->
+                    <div class="o_form_section mb-4">
+                        <h3 class="text-secondary">Personal Information</h3>
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" name="first_name" class="form-control"
+                                placeholder="Enter First Name" required='1' />
+                        </div>
+                        <div class="form-group">
+                            <label for="sur_name">Surname</label>
+                            <input type="text" name="sur_name" class="form-control"
+                                placeholder="Enter Surname" required='1' />
+                        </div>
+                        <div class="form-group">
+                            <label for="other_name">Other Name(s)</label>
+                            <input type="text" name="other_name" class="form-control"
+                                placeholder="Enter Other Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select name="gender" class="form-control" required="1">
+                                <option value="" disabled='1' selected='1'>Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" name="address" class="form-control"
+                                placeholder="Enter Address" required='1' />
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" name="dob" class="form-control" required='1' />
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload -->
+                    <div class="o_form_section mb-4">
+                        <h3 class="text-secondary">Upload Photo</h3>
+                        <div class="form-group">
+                            <input type="file" name="photo" class="form-control" required='1' />
+                        </div>
+                        <div class="alert alert-info">
+                            <h5>Photo Upload Guidelines</h5>
+                            <ul>
+                                <li>The photo should be a clear passport-sized image.</li>
+                                <li>The background must be plain white or light-colored.</li>
+                                <li>The face should be fully visible, centered, and looking directly
+                                    at the camera.</li>
+                                <li>Avoid wearing sunglasses, hats, or any accessories that obscure
+                                    the face.</li>
+                                <li>The file format should be JPEG or PNG.</li>
+                                <li>The image size should not exceed 5MB.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- LC Letter Upload -->
+                    <div class="o_form_section mb-4">
+                        <h3 class="text-secondary">Upload LC Letter</h3>
+                        <div class="form-group">
+                            <input type="file" name="lc_letter" class="form-control" required='1' />
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="success_page_template" name="Application Success">
+        <t t-call="website.layout">
+            <div class="container mt-5 text-center">
+                <h1>Application Submitted Successfully!</h1>
+                <p>Your application has been received and will be processed.</p>
+                <h2 class="text-success">Reference Number: <t t-esc="reference" /></h2>
+                <p>Please save this reference number to track your application status.</p>
+                <a href="/" class="btn btn-secondary mt-3">Go to Homepage</a>
+            </div>
+        </t>
+    </template>
+
+    <template id="error_template" name="Application Submission Error">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="alert alert-danger text-center">
+                    <h2>Application Submission Failed</h2>
+                    <p>
+                        <t t-esc="error_message" />
+                    </p>
+                    <a href="/national_id/apply" class="btn btn-secondary mt-3">Go Back</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

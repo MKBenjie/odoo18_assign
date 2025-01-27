@@ -13,7 +13,7 @@ Long description of module's purpose
     "category": "Uncategorized",
     "version": "0.1",
     # any module necessary for this one to work correctly
-    "depends": ["base", "mail", "web"],
+    "depends": ["base", "website", "mail", "web"],
     "assets": {
         "web.assets_backend": [
             'web/static/lib/owl/owl.js',
@@ -33,6 +33,9 @@ Long description of module's purpose
         "views/applicant_template.xml",
         "views/application_request_views.xml",
         "views/application_views.xml",
+        "views/customize_website_menu.xml",
+        "views/tracking_application.xml",
+        "views/website_application.xml",
         "views/menu.xml",
     ],
     "license": "LGPL-3",
