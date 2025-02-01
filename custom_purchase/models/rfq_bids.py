@@ -36,6 +36,7 @@ class PurchaseOrderBid(models.Model):
         string='Attachments',
         help="Attachments provided with the bid."
     )
+    is_winner = fields.Boolean(string='Is Winner', default=False, help="Mark this bid as the winning bid.")
 
 
     @api.constrains('vendor_id')
@@ -46,6 +47,17 @@ class PurchaseOrderBid(models.Model):
         for record in self:
             if record.vendor_id not in record.rfq_id.vendor_ids:
                 raise ValidationError("The vendor is not associated with the RFQ.")
+
+    @api.constrains('is_winner')
+    def _check_winning_bid(self):
+        """
+        Ensure only one bid can be marked as the winner.
+        """
+        for record in self:
+            if record.is_winner:
+                winning_bids = record.rfq_id.bid_ids.filtered(lambda bid: bid.is_winner)
+                if len(winning_bids) > 1:
+                    raise ValidationError("Only one bid can be marked as the winner.")
 
     @api.model_create_multi
     def create(self, vals_list):

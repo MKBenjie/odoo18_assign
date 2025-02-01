@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Custom Purchase App",
+    'name': "CPA",
 
     'summary': "Short (1 phrase/line) summary of the module's purpose",
 
     'description': """
-Long description of module's purpose
+Manage Requests and vendor bids
     """,
 
     'author': "My Company",
@@ -23,12 +23,9 @@ Long description of module's purpose
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        # 'views/purchase_views.xml',
+        'views/portal_template.xml',
         'views/purchase_order_view.xml',
     ],
     'license': 'LGPL-3',
-    'application': True,
-    'installable': True,
-    'auto_install': False,
 }
 

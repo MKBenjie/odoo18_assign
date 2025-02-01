@@ -25,12 +25,37 @@ class CustomPurchaseOrder(models.Model):
         help="Select vendors to whom this RFQ is sent"
     )
 
+    request_line_ids = fields.One2many(
+        comodel_name='purchase.order.line',  # Link to the order line model
+        inverse_name='order_id',  # The field in `purchase.order.line` that links to `purchase.order`
+        string="Request Lines"
+    )
+
     bid_ids = fields.One2many(
         comodel_name='purchase.order.bid',
         inverse_name='rfq_id',
         string='Bids',
         help="Bids received in response to this RFQ."
     )
+    bid_state = fields.Selection([
+        ('draft', 'Draft'),
+        ('vendor_requests_sent', 'Vendor Requests Sent'),
+        ('bid_closed', 'Bid Closed')
+    ], string='State', default='draft', tracking=True)
+
+    def action_send_vendor_requests(self):
+        """
+        Send vendor requests and change the status to 'Vendor Requests Sent'.
+        """
+        # self.ensure_one()
+        if not self.vendor_ids:
+            raise UserError("Please select at least one vendor to send requests.")
+        self.write({'bid_state': 'vendor_requests_sent'})
+        return True
+    
+    # def action_close_bid(self):
+    #     """Updates state to 'Bid Closed' when the bidding process is done."""
+    #     self.write({'state': 'bid_closed'})
 
     @api.onchange('vendor_ids')
     def _onchange_vendor_ids(self):
@@ -49,44 +74,34 @@ class CustomPurchaseOrder(models.Model):
         for vals in vals_list:
             # Check if 'vendor_ids' is in the correct format
             vendor_ids = vals.get('vendor_ids')
-            if vendor_ids and isinstance(vendor_ids, list) and vendor_ids[0][0] == 6:
-                vendor_ids = vendor_ids[0][2]  # Extract the list of vendor IDs
+            # print("These are the Vendor IDS", vendor_ids)
+            # print("These are the Vendor IDS", vals['partner_id'])
+            if vendor_ids and isinstance(vendor_ids, list):
+                # vendor_ids = vendor_ids[0][2]  # Extract the list of vendor IDs
                 if vendor_ids and not vals.get('partner_id'):
                     vals['partner_id'] = vendor_ids[0]  # Set the first vendor as the default
+
+            if not vals.get('partner_id'):
+                # Fetch the first available vendor from the system
+                default_vendor = self.env['res.partner'].search([('supplier_rank', '>', 0)], limit=1)
+
+                if default_vendor:
+                    vals['partner_id'] = default_vendor.id  # Assign the default vendor
+                else:
+                    raise UserError("A vendor must be selected, but no vendors exist in the system.")
         return super(CustomPurchaseOrder, self).create(vals_list)
 
-    def action_rfq_send(self):
+    def action_select_winning_bid(self):
         """
-        Customize the 'Send by Email' functionality to include all vendors in the 'To' field.
+        Select the winning bid and update the partner_id.
         """
-        self.ensure_one()  # Ensure the method is called on a single record
-        template = self.env.ref('purchase.email_template_edi_purchase', raise_if_not_found=False)
-        compose_form = self.env.ref('mail.email_compose_message_wizard_form', raise_if_not_found=False)
+        self.ensure_one()
+        winning_bid = self.bid_ids.filtered(lambda bid: bid.is_winner)
+        if not winning_bid:
+            raise UserError("Please select a winning bid.")
+        self.write({
+            'partner_id': winning_bid.vendor_id.id,
+            'bid_state': 'bid_closed',
+        })
+        return True
 
-        # Fetch vendors' partner IDs
-        partner_ids = self.vendor_ids.ids if self.vendor_ids else ([self.partner_id.id] if self.partner_id else [])
-        if not partner_ids:
-            raise UserError("Please ensure at least one vendor is selected.")
-
-
-        ctx = {
-            'default_model': 'purchase.order',
-            'default_res_ids': [self.id],
-            'default_partner_ids': partner_ids,  # Add vendors to the recipients
-            'default_template_id': template.id if template else False,
-            'default_use_template': bool(template),
-            'default_composition_mode': 'comment'
-        }
-
-        # Explicitly mark as sent
-        self.write({'state': 'sent'})  # Updates the record's state to 'sent'
-
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'mail.compose.message',
-            'views': [(compose_form.id, 'form')],
-            'view_id': compose_form.id,
-            'target': 'new',
-            'context': ctx,
-        }

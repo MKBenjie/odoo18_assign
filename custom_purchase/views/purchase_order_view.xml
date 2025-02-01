@@ -5,38 +5,69 @@
         <record id="view_purchase_order_form_inherited" model="ir.ui.view">
             <field name="name">purchase.order.form.inherited</field>
             <field name="model">purchase.order</field>
-            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="inherit_id" ref="purchase.purchase_order_form" />
             <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_rfq_send']" position="attributes">
+                    <attribute name="invisible">
+                        state != 'draft' or bid_state != 'bid_closed'
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='print_quotation']" position="attributes">
+                    <attribute name="invisible">
+                        state != 'draft' or bid_state != 'bid_closed'
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_confirm']" position="attributes">
+                    <attribute name="invisible">
+                        state != 'draft' or bid_state != 'bid_closed'
+                    </attribute>
+                </xpath>
                 <!-- Add a new page for vendors -->
                 <!-- <xpath expr="//page[@name='products']" position="after">
                     <page name="vendors_page" string="Vendors">
                         <field name="rfq_vendor_ids" widget="many2many_tags"/>
                     </page>
                 </xpath> -->
-                <xpath expr="//field[@name='partner_id']" position="replace">
-                    <field name="partner_id" options="{'no_create': True}" />
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="options">{'no_create': True}</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_ids" widget="many2many_tags" />
                 </xpath>
+                <xpath expr="//button[@name='action_rfq_send']" position="before">
+                    <button name="action_send_vendor_requests" string="Send Vendor Requests"
+                        type="object" class="btn-primary" invisible="bid_state != 'draft'" />
+                    <button name="action_select_winning_bid" string="Select Winning Bid"
+                        type="object" class="btn-primary"
+                        invisible="(bid_state != 'vendor_requests_sent')" />
+                </xpath>
 
-                 <notebook position="inside">
+                <!-- <xpath expr="//button[@name='button_confirm']" position="attributes">
+                    <attribute name="invisible">
+                        [('state', '!=', 'sent'), ('bid_state', '!=', 'bid_closed')]
+                    </attribute>
+                </xpath> -->
+
+                <notebook position="inside">
                     <page string="Bids">
                         <field name="bid_ids" context="{'default_order_id': id}">
-                            <!-- <tree editable="bottom">
+                            <list>
                                 <field name="vendor_id" />
                                 <field name="bid_amount" />
                                 <field name="bid_notes" />
-                                <field name="bid_attachment_ids" widget="many2many_binary" />
-                            </tree> -->
-                            <form editable='bottom'>
+                                <field name="is_winner" />
+                                <!-- <field name="bid_attachment_ids" widget="many2many_binary" /> -->
+                            </list>
+                            <!-- <form>
                                 <group>
                                     <field name="vendor_id" />
                                     <field name="bid_amount" />
                                     <field name="bid_notes" />
+                                    <field name="is_winner" />
                                     <field name="bid_attachment_ids" widget="many2many_binary" />
                                 </group>
-                            </form>
+                            </form> -->
                         </field>
                     </page>
                 </notebook>
@@ -48,10 +79,13 @@
         <record id="view_purchase_order_tree_inherited" model="ir.ui.view">
             <field name="name">purchase.order.tree.inherited</field>
             <field name="model">purchase.order</field>
-            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree" />
             <field name="arch" type="xml">
+                <!-- <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
                 <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="vendor_ids" widget="many2many_tags" string="Vendors"/>
+                    <field name="vendor_ids" widget="many2many_tags" string="Vendors" />
                 </xpath>
             </field>
         </record>
@@ -61,12 +95,12 @@
             <field name="name">purchase.order.bid.tree</field>
             <field name="model">purchase.order.bid</field>
             <field name="arch" type="xml">
-                <tree string="Bids" editable="bottom">
+                <list string="Bids" editable="bottom">
                     <field name="rfq_id" />
                     <field name="vendor_id" />
                     <field name="bid_amount" />
                     <field name="bid_notes" />
-                </tree>
+                </list>
             </field>
         </record> -->
 
@@ -77,11 +111,12 @@
             <field name="arch" type="xml">
                 <form string="Bid">
                     <group>
-                        <field name="rfq_id" />
-                        <field name="vendor_id" />
-                        <field name="bid_amount" />
-                        <field name="bid_notes" />
-                        <field name="bid_attachment_ids" widget="many2many_binary" />
+                        <field name="rfq_id" readonly='1' />
+                        <field name="vendor_id" readonly='1' />
+                        <field name="bid_amount" readonly='1' />
+                        <field name="bid_notes" readonly='1' />
+                        <field name="is_winner" />
+                        <!-- <field name="bid_attachment_ids" widget="many2many_binary" /> -->
                     </group>
                 </form>
             </field>
