@@ -27,10 +27,12 @@
                         class="btn-primary" />
                     <button name="action_approve" type="object" string="Approve"
                         invisible="state != 'submitted'"
-                        class="btn-success" groups="purchase_request.group_purchase_request_approvers" />
+                        class="btn-success"
+                        groups="purchase_request.group_purchase_request_approvers" />
                     <button name="action_reject" type="object" string="Reject"
                         invisible="state != 'submitted'"
-                        class="btn-danger" groups="purchase_request.group_purchase_request_approvers" />
+                        class="btn-danger"
+                        groups="purchase_request.group_purchase_request_approvers" />
                     <button name="action_create_rfq" type="object" string="Create RFQ"
                         invisible="state != 'approved'" class="btn-primary"
                         groups="purchase_request.group_purchase_request_approvers" />
@@ -43,14 +45,30 @@
                         <field name="date_requested" />
                         <field name="description" />
                     </group>
-                    <group>
-                        <field name="request_line_ids">
-                            <list editable="bottom">
-                                <field name="product_id" />
-                                <field name="product_qty" />
-                            </list>
-                        </field>
-                    </group>
+                    <notebook>
+                        <page string="Products" name="products">
+                            <field name="request_line_ids"
+                                widget="product_label_section_and_note_field_o2m"
+                                mode="list">
+                                <list string="" editable="bottom">
+                                    <control>
+                                        <create name="add_product_control"
+                                            string="Add a product" />
+                                        <create name="add_section_control"
+                                            string="Add a section"
+                                            context="{'default_display_type': 'line_section'}" />
+                                        <create name="add_note_control" string="Add a note"
+                                            context="{'default_display_type': 'line_note'}" />
+                                    </control>
+                                    <!-- <field name="sequence" widget="handle" string="Seq." width="1%" /> -->
+                                    <field name="product_id" string="Product" required="1"
+                                        widget="product_label_section_and_note_field" />
+                                    <field name="product_qty" string="Quantity" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+
                 </sheet>
             </form>
         </field>

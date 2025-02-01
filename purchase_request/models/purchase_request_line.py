@@ -18,3 +18,4 @@ class PurchaseRequestLine(models.Model):
     )
     product_qty = fields.Float(string='Quantity', required=True, default=1.0)
     description = fields.Text(string='Description')
+    sequence = fields.Integer(string='Sequence', default=10)
