@@ -10,7 +10,7 @@ class CustomPurchaseOrder(models.Model):
     partner_id = fields.Many2one(
         'res.partner', 
         string='Vendor', 
-        required=True, 
+        required=False, 
         domain="[('id', 'in', vendor_ids)]",
         help="The selected vendor for this RFQ. Vendors are obtained from the Vendors list."
     )
@@ -52,43 +52,10 @@ class CustomPurchaseOrder(models.Model):
             raise UserError("Please select at least one vendor to send requests.")
         self.write({'bid_state': 'vendor_requests_sent'})
         return True
-    
-    # def action_close_bid(self):
-    #     """Updates state to 'Bid Closed' when the bidding process is done."""
-    #     self.write({'state': 'bid_closed'})
 
-    @api.onchange('vendor_ids')
-    def _onchange_vendor_ids(self):
-        """
-        Automatically set the first vendor in the list to the `partner_id` field
-        if no vendor has been selected.
-        """
-        if not self.partner_id and self.vendor_ids:
-            self.partner_id = self.vendor_ids[0]
 
     @api.model_create_multi
     def create(self, vals_list):
-        """
-        Ensure a vendor is selected or set the first vendor automatically.
-        """
-        for vals in vals_list:
-            # Check if 'vendor_ids' is in the correct format
-            vendor_ids = vals.get('vendor_ids')
-            # print("These are the Vendor IDS", vendor_ids)
-            # print("These are the Vendor IDS", vals['partner_id'])
-            if vendor_ids and isinstance(vendor_ids, list):
-                # vendor_ids = vendor_ids[0][2]  # Extract the list of vendor IDs
-                if vendor_ids and not vals.get('partner_id'):
-                    vals['partner_id'] = vendor_ids[0]  # Set the first vendor as the default
-
-            if not vals.get('partner_id'):
-                # Fetch the first available vendor from the system
-                default_vendor = self.env['res.partner'].search([('supplier_rank', '>', 0)], limit=1)
-
-                if default_vendor:
-                    vals['partner_id'] = default_vendor.id  # Assign the default vendor
-                else:
-                    raise UserError("A vendor must be selected, but no vendors exist in the system.")
         return super(CustomPurchaseOrder, self).create(vals_list)
 
     def action_select_winning_bid(self):
